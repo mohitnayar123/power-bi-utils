@@ -6,4 +6,4 @@ pip install pandas
 pip install json
 pip install os
 
-python /scripts/python/upload_file.py "$1"
+python /scripts/python/upload_file.py --files "$1"
