@@ -1,0 +1,139 @@
+import requests
+import os
+import yaml
+import argparse
+
+deploy_config_location = os.getcwd() + "/deploy_config.yaml"
+with open(deploy_config_location, 'r') as file:
+    config = yaml.safe_load(file)
+
+parser = argparse.ArgumentParser(description='Personal information')
+parser.add_argument('--files', dest='files', type=str, help='files')
+args = parser.parse_args()
+
+
+def get_access_token():
+    """
+    This function takes in client id, client secrets and tenant id stored in the config file and returns an authentication token that can be used to call the Power BI Rest API.
+
+    Returns
+    -------
+    access_token : str
+        Authentication token to use when calling the Power BI Rest API.
+
+    """
+    tenant_id = config["spn_credentials"]["tenant_id"]
+    client_id = config["spn_credentials"]["client_id"]
+    client_secret = config["spn_credentials"]["client_secret"]
+
+    url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/token"
+
+    payload = {
+        'grant_type': 'client_credentials',
+        'scope': 'oauth',
+        'resource': 'https://analysis.windows.net/powerbi/api',
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'response_mode': 'query'}
+
+    response = requests.request("POST", url, data=payload)
+    access_token = f"Bearer  {response.json().get('access_token')}"
+    return access_token
+
+
+def get_pbix_deploy_options():
+    """
+    This function takes in deploy options: pbix_name_conflict, override_model_name, override_report_label stored in the config file and returns a string that can appended to the rest api end point.
+    Returns
+    -------
+    deploy_options : str
+        Deploy options to use when calling the Power BI Rest API.
+
+    """
+    pbix_name_conflict = config["deploy_options"]["pbix_name_conflict"]
+    override_model_name = config["deploy_options"]["override_model_name"]
+    override_report_label = config["deploy_options"]["override_report_label"]
+
+    if pbix_name_conflict in ["Overwrite", "Ignore", "Abort", "CreateOrOverwrite", "GenerateUniqueName"]:
+        name_conflict_str = f"nameConflict={pbix_name_conflict}"
+    else:
+        name_conflict_str = "nameConflict=Ignore"
+
+    if override_model_name in [True, False]:
+        override_model_name_str = f"overrideModelLabel={override_model_name}"
+    else:
+        override_model_name_str = "overrideModelLabel=True"
+
+    if override_report_label in [True, False]:
+        override_report_label_str = f"overrideReportLabel={override_report_label}"
+    else:
+        override_report_label_str = "overrideReportLabel=True"
+
+    deploy_options = "&" + name_conflict_str + "&" + \
+        override_model_name_str + "&" + override_report_label_str
+    return deploy_options
+
+
+def get_rdl_deploy_options():
+    """
+    This function takes in deploy options: rdl_name_conflict stored in the config file and returns a string that can appended to the rest api end point.
+    Returns
+    -------
+    deploy_options : str
+        Deploy options to use when calling the Power BI Rest API.
+
+    """
+    rdl_name_conflict = config["deploy_options"]["rdl_name_conflict"]
+
+    if rdl_name_conflict in ["Overwrite", "Abort"]:
+        name_conflict_str = f"nameConflict={rdl_name_conflict}"
+    else:
+        name_conflict_str = "nameConflict=Abort"
+
+    deploy_options = "&" + name_conflict_str
+    return deploy_options
+
+
+def main():
+    access_token = get_access_token()
+
+    file_location = os.getcwd() + "/Power Deploy Thin Report.Pbix"
+    dataset_name = "Power Deploy Thin Report"
+
+    if config["deploy_options"]["max_file_size_supported_in_mb"] < 1024:
+        max_file_size_supported_in_mb = config["deploy_options"]["max_file_size_supported_in_mb"]
+    else:
+        max_file_size_supported_in_mb = 1024
+
+    for file in files:
+        print(os.getcwd())
+        print(file)
+
+    file_extension = os.path.splitext(file_location)[1].lower()
+    #
+    # if os.path.getsize(file_location) / (1024 * 1024) < max_file_size_supported_in_mb and file_extension in [".pbix", ".rdl"]:
+    #     open_file = open(file_location, "rb")
+    #     workspace_id = config["deploy_location"]["workspace_id"]
+    #
+    #     headers = {'Authorization': access_token}
+    #     file = {'file': open_file}
+    #
+    #     if file_extension == ".pbix":
+    #         url = f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/imports?datasetDisplayName={dataset_name}" + \
+    #             get_pbix_deploy_options()
+    #     elif file_extension == ".rdl":
+    #         url = f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/imports?datasetDisplayName={dataset_name}" + \
+    #             get_rdl_deploy_options()
+    #
+    #     response = requests.request("POST", url, headers=headers, files=file)
+    #
+    #     print(response.status_code)
+    #     print(response.text)
+    #
+    # else:
+    #     print("File Size over 1024 MB")
+
+
+if __name__ == '__main__':
+
+    main()
