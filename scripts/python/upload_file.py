@@ -7,10 +7,6 @@ deploy_config_location = os.getcwd() + "/deploy_config.yaml"
 with open(deploy_config_location, 'r') as file:
     config = yaml.safe_load(file)
 
-parser = argparse.ArgumentParser(description='Personal information')
-parser.add_argument('--files', dest='files', type=str, help='files')
-args = parser.parse_args()
-
 
 def get_access_token():
     """
@@ -97,41 +93,44 @@ def get_rdl_deploy_options():
 def main():
     access_token = get_access_token()
 
-    file_location = os.getcwd() + "/Power Deploy Thin Report.Pbix"
-    dataset_name = "Power Deploy Thin Report"
-
     if config["deploy_options"]["max_file_size_supported_in_mb"] < 1024:
         max_file_size_supported_in_mb = config["deploy_options"]["max_file_size_supported_in_mb"]
     else:
         max_file_size_supported_in_mb = 1024
 
-    for file in files:
-        print(os.getcwd())
-        print(file)
+    parser = argparse.ArgumentParser(description='Personal information')
+    parser.add_argument('--files', dest='files', type=str,
+                        help='List of all file names that need to be uploaded to the Power BI Service')
+    args = parser.parse_args()
 
-    file_extension = os.path.splitext(file_location)[1].lower()
-    #
-    # if os.path.getsize(file_location) / (1024 * 1024) < max_file_size_supported_in_mb and file_extension in [".pbix", ".rdl"]:
-    #     open_file = open(file_location, "rb")
-    #     workspace_id = config["deploy_location"]["workspace_id"]
-    #
-    #     headers = {'Authorization': access_token}
-    #     file = {'file': open_file}
-    #
-    #     if file_extension == ".pbix":
-    #         url = f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/imports?datasetDisplayName={dataset_name}" + \
-    #             get_pbix_deploy_options()
-    #     elif file_extension == ".rdl":
-    #         url = f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/imports?datasetDisplayName={dataset_name}" + \
-    #             get_rdl_deploy_options()
-    #
-    #     response = requests.request("POST", url, headers=headers, files=file)
-    #
-    #     print(response.status_code)
-    #     print(response.text)
-    #
-    # else:
-    #     print("File Size over 1024 MB")
+    file_name_array = args.files.split(",")
+
+    for file_name in file_name_array:
+        file_extension = os.path.splitext(file_name)[1].lower()
+        file_name_without_extension = os.path.splitext(file_name)[0]
+        file_location = os.getcwd() + "/" + file_name
+
+        if os.path.getsize(file_location) / (1024 * 1024) < max_file_size_supported_in_mb and file_extension in [".pbix", ".rdl"]:
+            open_file = open(file_location, "rb")
+            workspace_id = config["deploy_location"]["workspace_id"]
+
+            headers = {'Authorization': access_token}
+            file = {'file': open_file}
+
+            if file_extension == ".pbix":
+                url = f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/imports?datasetDisplayName={file_name_without_extension}" + \
+                    get_pbix_deploy_options()
+            elif file_extension == ".rdl":
+                url = f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/imports?datasetDisplayName={file_name_without_extension}" + \
+                    get_rdl_deploy_options()
+
+            response = requests.request("POST", url, headers=headers, files=file)
+
+            print(response.status_code)
+            print(response.text)
+
+        else:
+            print("File Size over 1024 MB")
 
 
 if __name__ == '__main__':
