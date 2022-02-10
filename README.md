@@ -38,7 +38,9 @@ jobs:
           fetch-depth: 0
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v11.9
+        uses: tj-actions/changed-files@v12
+        with:
+          separator: ","
       - name: Upload files
         uses: mohitnayar123/power-bi-utils@v0.1.5-alpha # Replace this with the latest version
         with:
