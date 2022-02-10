@@ -130,8 +130,10 @@ def main():
             else:
                 print(f"ERROR: {response.status_code}: {response.content}\nURL: {response.url}")
 
+        elif not file_extension in [".pbix", ".rdl"]:
+                print("File type not supported")
         else:
-            print("File Size over 1024 MB")
+                print("File Size over 1024 MB")
 
 
 if __name__ == '__main__':
