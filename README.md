@@ -42,7 +42,7 @@ jobs:
         with:
           separator: ","
       - name: Upload files
-        uses: mohitnayar123/power-bi-utils@v0.1.5-alpha # Replace this with the latest version
+        uses: mohitnayar123/power-bi-utils@v1.0.3 # Replace this with the latest version
         with:
           files: ${{ steps.changed-files.outputs.all_modified_files }}
         env:
