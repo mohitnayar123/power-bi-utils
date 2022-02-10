@@ -3,7 +3,7 @@ import os
 import yaml
 import argparse
 
-deploy_config_location = ".github/config/deploy_config.yaml"
+deploy_config_location = os.getcwd() + "/deploy_config.yaml"
 with open(deploy_config_location, 'r') as file:
     config = yaml.safe_load(file)
 
@@ -19,8 +19,6 @@ def get_access_token():
 
     """
     tenant_id = config["spn_credentials"]["tenant_id"]
-    client_id = config["spn_credentials"]["client_id"]
-    client_secret = config["spn_credentials"]["client_secret"]
 
     url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/token"
 
@@ -28,8 +26,8 @@ def get_access_token():
         'grant_type': 'client_credentials',
         'scope': 'oauth',
         'resource': 'https://analysis.windows.net/powerbi/api',
-        'client_id': client_id,
-        'client_secret': client_secret,
+        'client_id': os.environ['CLIENT_ID'],
+        'client_secret': os.environ['CLIENT_SECRET']
         'response_mode': 'query'}
 
     response = requests.request("POST", url, data=payload)
@@ -103,6 +101,7 @@ def main():
                         help='List of all file names that need to be uploaded to the Power BI Service')
     args = parser.parse_args()
 
+    # Deploy files passed in the files argument
     file_name_array = args.files.split(",")
 
     for file_name in file_name_array:
@@ -125,9 +124,11 @@ def main():
                     get_rdl_deploy_options()
 
             response = requests.request("POST", url, headers=headers, files=file)
-
-            print(response.status_code)
-            print(response.text)
+            if response.status_code in [200, 202]:
+                import_id = response.json().get("id")
+                print("Load Succeeded, Import Id:" + import_id)
+            else:
+                print(f"ERROR: {response.status_code}: {response.content}\nURL: {response.url}")
 
         else:
             print("File Size over 1024 MB")
