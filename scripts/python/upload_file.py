@@ -3,7 +3,7 @@ import os
 import yaml
 import argparse
 
-deploy_config_location = os.getcwd() + "/deploy_config.yaml"
+deploy_config_location = ".github/config/deploy_config.yaml"
 with open(deploy_config_location, 'r') as file:
     config = yaml.safe_load(file)
 
