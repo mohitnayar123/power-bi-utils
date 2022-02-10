@@ -27,7 +27,7 @@ def get_access_token():
         'scope': 'oauth',
         'resource': 'https://analysis.windows.net/powerbi/api',
         'client_id': os.environ['CLIENT_ID'],
-        'client_secret': os.environ['CLIENT_SECRET']
+        'client_secret': os.environ['CLIENT_SECRET'],
         'response_mode': 'query'}
 
     response = requests.request("POST", url, data=payload)
