@@ -8,13 +8,16 @@ How to Deploy:
 spn_credentials:
     tenant_id: ########-####-####-####-############           #The tenant id
 
-pbix_deploy_options:
+deploy_options:
     max_file_size_supported_in_mb: 110                        #Maximum File Size Supported. Action only supports files upto 1000 MB.
+    
+pbix_deploy_options:
     pbix_name_conflict: CreateOrOverwrite                     #Determines what to do if a dataset with the same name already exists. Abort, CreateOrOverwrite, GenerateUniqueName, Ignore, Overwrite (https://docs.microsoft.com/en-us/rest/api/power-bi/imports/post-import-in-group#post-import-example)
     override_model_name: True                                 #Determines whether to override existing label on model during republish of PBIX file, service default value is true.
     override_report_label: True                               #Determines whether to override existing label on report during republish of PBIX file, service default value is true.
 
 rdl_deploy_options:
+    max_file_size_supported_in_mb: 110                        #Maximum File Size Supported. Action only supports files upto 1000 MB.
     rdl_name_conflict: Overwrite                              #Determines what to do if a dataset with the same name already exists. Only Abort and Overwrite are supported with Rdl files. (https://docs.microsoft.com/en-us/rest/api/power-bi/imports/post-import-in-group#post-import-example)
 
 deploy_location:
