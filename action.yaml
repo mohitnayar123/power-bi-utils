@@ -1,5 +1,5 @@
 name: 'Power BI Service Upload'
-description: 'Deploys PBIX and RDL Files to the Power BI Service'
+description: 'Deploys PBIX and RDL Files under 1 GB to the Power BI Service'
 author: 'Mohit Nayar'
 inputs:
   files:
