@@ -44,9 +44,9 @@ def get_pbix_deploy_options():
         Deploy options to use when calling the Power BI Rest API.
 
     """
-    pbix_name_conflict = config["deploy_options"]["pbix_name_conflict"]
-    override_model_name = config["deploy_options"]["override_model_name"]
-    override_report_label = config["deploy_options"]["override_report_label"]
+    pbix_name_conflict = config["pbix_deploy_options"]["pbix_name_conflict"]
+    override_model_name = config["pbix_deploy_options"]["override_model_name"]
+    override_report_label = config["pbix_deploy_options"]["override_report_label"]
 
     if pbix_name_conflict in ["Overwrite", "Ignore", "Abort", "CreateOrOverwrite", "GenerateUniqueName"]:
         name_conflict_str = f"nameConflict={pbix_name_conflict}"
@@ -77,7 +77,7 @@ def get_rdl_deploy_options():
         Deploy options to use when calling the Power BI Rest API.
 
     """
-    rdl_name_conflict = config["deploy_options"]["rdl_name_conflict"]
+    rdl_name_conflict = config["rdl_deploy_options"]["rdl_name_conflict"]
 
     if rdl_name_conflict in ["Overwrite", "Abort"]:
         name_conflict_str = f"nameConflict={rdl_name_conflict}"
