@@ -14,4 +14,4 @@ rdl_deploy_options:
     rdl_name_conflict: Overwrite                              #Determines what to do if a dataset with the same name already exists. Only Abort and Overwrite are supported with Rdl files. (https://docs.microsoft.com/en-us/rest/api/power-bi/imports/post-import-in-group#post-import-example)
 
 deploy_location:
-    workspace_id:ce92bc77-a932-4fe2-8b5b-32a42f212200         #The workspace ID
+    workspace_id: ce92bc77-a932-4fe2-8b5b-32a42f212200         #The workspace ID
