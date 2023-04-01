@@ -18,5 +18,5 @@ jobs:
         with:
           files: ${{ steps.changed-files.outputs.all_modified_files }}
         env:
-          CLIENT_ID: ${{ secrets.client_id }}
-          CLIENT_SECRET: ${{ secrets.client_secret }}
+          CLIENT_ID: cloud_user_p_6084de04@realhandsonlabs.com
+          CLIENT_SECRET: AhkTqgG9ttlLsBW8%5NB
