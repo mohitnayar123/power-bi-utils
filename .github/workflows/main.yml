@@ -1,0 +1,23 @@
+name: Workflow Name
+on: 
+  workflow_dispatch
+jobs:
+  Deploy-Asset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v19
+        with:
+          separator: ","
+          quotepath: "false"
+      - name: Upload files
+        uses: mohitnayar123/power-bi-utils@v1.0.3 # Replace this with the latest version
+        with:
+          files: ${{ steps.changed-files.outputs.all_modified_files }}
+        env:
+          CLIENT_ID: cloud_user_p_6084de04@realhandsonlabs.com
+          CLIENT_SECRET: AhkTqgG9ttlLsBW8%5NB
